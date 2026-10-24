@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI engineer switch: 12-week tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2f5f7;--surface:#fff;--ink:#14202b;--muted:#5a6b78;--line:#d5dde3;--accent:#0f766e;--accent-soft:#cfeae6;--partial:#8fcfc7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181f;--surface:#18232c;--ink:#e6edf2;--muted:#93a3af;--line:#2b3a46;--accent:#4fd1c0;--accent-soft:#1d4a45;--partial:#2f7f76}}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:light dark}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+main{max-width:760px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:clamp(1.7rem,5vw,2.4rem);line-height:1.15;margin:0 0 8px;font-weight:600;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 24px;max-width:60ch}
+.total{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.total strong{font-size:2.4rem;font-weight:600;line-height:1}
+.total span{color:var(--muted)}
+.strip{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-bottom:28px}
+.strip a{height:34px;border-radius:4px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--muted);text-decoration:none}
+.strip a.p{background:var(--partial);color:var(--ink);border-color:var(--partial)}
+.strip a.d{background:var(--accent);color:var(--bg);border-color:var(--accent);font-weight:600}
+.strip a.now{outline:2px solid var(--ink);outline-offset:2px}
+.strip a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+section.week{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:12px}
+section.week h2{font-size:1.05rem;margin:0 0 8px;display:flex;justify-content:space-between;gap:12px;font-weight:600}
+section.week h2 small{font-weight:400;color:var(--muted);white-space:nowrap}
+section.week.cur{border-color:var(--accent)}
+label.t{display:flex;gap:10px;align-items:flex-start;padding:5px 0;cursor:pointer}
+label.t input{margin-top:5px;width:17px;height:17px;accent-color:var(--accent);flex:none}
+label.t.x span{color:var(--muted);text-decoration:line-through}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;margin:28px 0 0}
+.panel h2{font-size:1.05rem;margin:0 0 4px}
+.panel p{margin:0 0 12px;color:var(--muted);font-size:.92rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+input[type=email],input[type=date]{flex:1 1 220px;min-width:0;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+button{padding:9px 16px;border:0;border-radius:6px;background:var(--accent);color:var(--bg);font:inherit;font-weight:600;cursor:pointer}
+button.alt{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:400}
+</style>
+</head>
+<body>
+<main>
+<h1>AI engineer switch: 12-week tracker</h1>
+<p class="sub">From senior software engineer to AI application engineer. Tick tasks as you finish them; your progress saves in this browser.</p>
+<div class="total"><strong id="pct">0%</strong><span id="cnt"></span></div>
+<nav class="strip" id="strip" aria-label="Weeks"></nav>
+<div id="weeks"></div>
+
+<div class="panel">
+<h2>Email my progress</h2>
+<p>Opens your mail app with a summary ready to send. Send it to yourself weekly, or to a mentor or friend who keeps you accountable.</p>
+<div class="row"><input type="email" id="to" placeholder="you@example.com" aria-label="Email address"><button id="send">Email progress</button></div>
+<div class="row"><input type="date" id="start" aria-label="Start date"><button class="alt" id="reset">Reset all</button></div>
+<p style="margin:0">Set a start date to highlight the current week.</p>
+</div>
+</main>
+<script>
+var W=[
+["Python fluency",["Learn Python syntax coming from C# and JS; set up venv and pip","Practise typing, dataclasses, pytest","Solve 15 small exercises (lists, dicts, files, classes)","Push a small CLI tool to GitHub"]],
+["Python for AI work",["Learn async/await and HTTP calls in Python","Build a CRUD API with FastAPI","Pandas and NumPy basics on a real CSV","Write SQL queries from Python"]],
+["Machine learning basics",["Andrew Ng Machine Learning Specialization, course 1","Train a classifier with scikit-learn","Learn precision, recall, overfitting, train/test split","Write a one-page summary in your own words"]],
+["How LLMs work",["Watch Karpathy: Intro to Large Language Models","Understand tokens, embeddings, attention at a high level","Run a PyTorch intro tutorial","Run a small open-source model locally"]],
+["LLM APIs",["Call the Claude and OpenAI APIs with a key","Use system prompts, structured JSON output, streaming","Build a CLI chatbot with conversation memory","Track token cost for one session"]],
+["Tool use and MCP",["Learn function calling / tool use","Build an assistant with 2 to 3 tools","Read the MCP docs and run one MCP server","Handle tool errors and retries"]],
+["Embeddings and retrieval",["Generate embeddings for a set of documents","Set up pgvector (or Qdrant) and store vectors","Try 2 chunking strategies and compare results","Build a search function with top-k retrieval"]],
+["Project 1: RAG app",["FastAPI backend: ingest, retrieve, answer with citations","React chat UI with streaming","Add auth and basic rate limiting","Deploy it and share the link"]],
+["Agents and evals",["Build an agent loop (plan, act, observe)","Write an eval set of 30+ test cases","Add LLM-as-judge scoring and compare prompt versions","Add tracing with Langfuse or similar"]],
+["Deployment and cost",["Dockerize the backend","Deploy on Azure or another cloud","Set up CI/CD with GitHub Actions","Measure and reduce latency and cost"]],
+["Project 2: agent or .NET AI layer",["Pick a real workflow (support triage, reports, or a legacy .NET system)","Build the agent with tools and guardrails","Run evals and fix the worst failures","Record a 2-minute demo video"]],
+["Portfolio and launch",["Write READMEs with architecture diagrams","Publish a LinkedIn post for each project","Update resume and GitHub profile","Apply to roles, or launch your MVP to 5 to 10 users"]]
+];
+var S={done:{}};
+try{var r=localStorage.getItem("aitrack");if(r)S=JSON.parse(r);if(!S.done)S.done={}}catch(e){}
+function save(){try{localStorage.setItem("aitrack",JSON.stringify(S))}catch(e){}}
+function cw(){if(!S.start)return 0;var n=Math.floor((Date.now()-new Date(S.start).getTime())/6048e5)+1;return n>=1&&n<=12?n:0}
+function render(){
+ var tot=0,dn=0,cur=cw(),strip="",html="";
+ W.forEach(function(w,i){
+  var d=0;
+  w[1].forEach(function(t,j){if(S.done[i+"-"+j])d++});
+  tot+=w[1].length;dn+=d;
+  var cls=d===w[1].length?"d":d>0?"p":"";
+  if(cur===i+1)cls+=" now";
+  strip+='<a href="#w'+i+'" class="'+cls+'" aria-label="Week '+(i+1)+': '+d+' of '+w[1].length+' done">'+(i+1)+'</a>';
+  html+='<section class="week'+(cur===i+1?" cur":"")+'" id="w'+i+'"><h2><span>Week '+(i+1)+': '+w[0]+'</span><small>'+(cur===i+1?"this week · ":"")+d+'/'+w[1].length+'</small></h2>';
+  w[1].forEach(function(t,j){
+   var k=i+"-"+j,c=S.done[k];
+   html+='<label class="t'+(c?" x":"")+'"><input type="checkbox" data-k="'+k+'"'+(c?" checked":"")+'><span>'+t+'</span></label>';
+  });
+  html+='</section>';
+ });
+ document.getElementById("strip").innerHTML=strip;
+ document.getElementById("weeks").innerHTML=html;
+ document.getElementById("pct").textContent=Math.round(dn/tot*100)+"%";
+ document.getElementById("cnt").textContent=dn+" of "+tot+" tasks done";
+}
+function summary(){
+ var tot=0,dn=0,lines=[],next=null;
+ W.forEach(function(w,i){
+  var d=0;w[1].forEach(function(t,j){tot++;if(S.done[i+"-"+j]){d++;dn++}else if(!next)next="Week "+(i+1)+": "+t});
+  lines.push("Week "+(i+1)+" ("+w[0]+"): "+d+"/"+w[1].length);
+ });
+ return {pct:Math.round(dn/tot*100),text:"AI engineer switch progress: "+Math.round(dn/tot*100)+"% ("+dn+" of "+tot+" tasks)\n\n"+lines.join("\n")+"\n\nNext task: "+(next||"All done!")};
+}
+document.addEventListener("change",function(e){
+ var k=e.target.getAttribute&&e.target.getAttribute("data-k");
+ if(k){if(e.target.checked)S.done[k]=1;else delete S.done[k];save();render()}
+});
+document.getElementById("send").onclick=function(){
+ var to=document.getElementById("to").value.trim();S.email=to;save();
+ var s=summary();
+ location.href="mailto:"+encodeURIComponent(to)+"?subject="+encodeURIComponent("AI engineer progress: "+s.pct+"%")+"&body="+encodeURIComponent(s.text);
+};
+document.getElementById("start").onchange=function(e){S.start=e.target.value;save();render()};
+document.getElementById("reset").onclick=function(){if(confirm("Clear all progress?")){S={done:{}};save();document.getElementById("start").value="";document.getElementById("to").value="";render()}};
+if(S.email)document.getElementById("to").value=S.email;
+if(S.start)document.getElementById("start").value=S.start;
+render();
+</script>
+</body>
+</html>
